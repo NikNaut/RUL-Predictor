@@ -36,7 +36,7 @@ Battery capacity degrades non-linearly — it fades slowly at first, then accele
 | Battery | Cycles Observed | Initial Capacity (Ah) | MAE (Ah) | RMSE (Ah) | R² | Predicted EOL (cycle) |
 |---------|----------------|------------------------|----------|-----------|-----|----------------------|
 | B0005   |      168       |         1.8565         | **0.0159** | **0.0181** | **0.9909** | 106 |
-| B0006   |      168       |         2.0353         | **0.0199** | **0.0285** | **0.9871** | 60 |
+| B0006   |      168       |         2.0353         | **0.0199** | **0.0285** | **0.9871** |  60 |
 | B0007   |      168       |         1.8911         | **0.0164** | **0.0216** | **0.9819** | 120 |
 
 <img width="800" height="400" alt="Figure_4" src="https://github.com/user-attachments/assets/708e4638-f84d-482d-96eb-d7b852347a82" />
