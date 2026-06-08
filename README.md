@@ -3,6 +3,8 @@
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Dataset: NASA PCoE](https://img.shields.io/badge/Dataset-NASA%20PCoE-orange)](https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B)](https://rul-predictor.streamlit.app/)
+
 
 Predicts how many charge-discharge cycles remain before a lithium-ion battery reaches end-of-life — using a neural network trained on NASA's battery degradation dataset.
 
