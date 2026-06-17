@@ -149,9 +149,9 @@ def plot_combined_soh(cycles_list, capacities_list, labels):
 if __name__ == "__main__":
 
     files = {
-        "B0005": "batt_data5.csv",
-        "B0006": "batt_data6.csv",
-        "B0007": "batt_data7.csv"
+        "B0005": "data/batt_data5.csv",
+        "B0006": "data/batt_data6.csv",
+        "B0007": "data/batt_data7.csv"
     }
 
     capacities_all = {}

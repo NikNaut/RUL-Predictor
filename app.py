@@ -204,7 +204,7 @@ if uploaded_file:
 
     actual_eol_idx = np.where(capacity <= threshold)[0]
     actual_eol = int(actual_eol_idx[0] +
-                     1) if len(actual_eol_idx) > 0 else None
+                    1) if len(actual_eol_idx) > 0 else None
 
     if eol is not None:
         if predicted_rul == 0:
@@ -263,13 +263,13 @@ if uploaded_file:
     ax.plot(cycles, soh_predicted, color='#f85149',
             linewidth=1.5, linestyle='--', label='NN Prediction')
     ax.axhline(y=80, color='#8b949e', linestyle=':', linewidth=1,
-               label=f'EOL threshold (80% = {threshold:.4f} Ah)')
+                label=f'EOL threshold (80% = {threshold:.4f} Ah)')
     if eol:
         ax.axvline(x=eol,        color='#f0a30a', linestyle='--',
-                   linewidth=1, label=f'Predicted EOL: cycle {eol}')
+                    linewidth=1, label=f'Predicted EOL: cycle {eol}')
     if actual_eol:
         ax.axvline(x=actual_eol, color='#3fb950', linestyle='--',
-                   linewidth=1, label=f'Actual EOL: cycle {actual_eol}')
+                    linewidth=1, label=f'Actual EOL: cycle {actual_eol}')
     ax.set_xlabel("Cycle")
     ax.set_ylabel("State of Health (%)")
     ax.set_title("State of Health Over Cycle Life", pad=12)

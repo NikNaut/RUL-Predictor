@@ -49,11 +49,21 @@ Battery capacity degrades non-linearly — it fades slowly at first, then accele
 
 ```
 RUL-Predictor/
-├── batt_data5.csv      # NASA battery B0005 — discharge capacity per cycle
-├── batt_data6.csv      # NASA battery B0006
-├── batt_data7.csv      # NASA battery B0007
-├── main.py             # Full pipeline: load → train → evaluate → predict → plot
-├── requirements.txt    # Dependencies
+├── data/
+│   ├── batt_data5.csv      # NASA battery B0005 — discharge capacity per cycle
+│   ├── batt_data6.csv      # NASA battery B0006
+│   └── batt_data7.csv      # NASA battery B0007
+├── models/
+│   ├── rul_model.h5        # Pre-trained neural network model
+│   └── max_cycle.npy       # Normalisation factor used during training
+├── notebooks/
+│   └── RUL_Analysis.ipynb  # Exploratory analysis with SoH plots and LSTM comparison
+├── main.py                 # Core pipeline: load → train → evaluate → predict → plot
+├── train.py                # Trains and saves the model for API use
+├── api.py                  # FastAPI app — REST endpoint for RUL prediction
+├── app.py                  # Streamlit web app for interactive RUL prediction
+├── requirements.txt        # Dependencies
+├── .gitignore
 └── README.md
 ```
 
@@ -65,7 +75,18 @@ RUL-Predictor/
 git clone https://github.com/NikNaut/RUL-Predictor.git
 cd RUL-Predictor
 pip install -r requirements.txt
+
+# Run the core pipeline (training, evaluation, plots)
 python main.py
+
+# Train and save model for API use
+python train.py
+
+# Run the FastAPI server
+uvicorn api:app --reload
+
+# Or run the Streamlit web app
+streamlit run app.py
 ```
 
 **Output:**
@@ -84,6 +105,7 @@ python main.py
 | TensorFlow / Keras | Neural network model |
 | Scikit-learn | Evaluation metrics (MAE, RMSE, R²) |
 | Matplotlib | Degradation curve visualisation |
+| FastAPI | REST API for model serving |
 
 ---
 
