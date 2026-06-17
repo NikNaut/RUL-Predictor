@@ -63,7 +63,6 @@ RUL-Predictor/
 ├── api.py                  # FastAPI app — REST endpoint for RUL prediction
 ├── app.py                  # Streamlit web app for interactive RUL prediction
 ├── requirements.txt        # Dependencies
-├── .gitignore
 └── README.md
 ```
 
