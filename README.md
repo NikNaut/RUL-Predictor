@@ -3,7 +3,7 @@
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Dataset: NASA PCoE](https://img.shields.io/badge/Dataset-NASA%20PCoE-orange)](https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/)
-[![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B)](https://rul-predictor.streamlit.app/)
+[![Live Demo](https://img.shields.io/badge/-Live%20Demo-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://rul-predictor.streamlit.app/)
 
 
 Predicts how many charge-discharge cycles remain before a lithium-ion battery reaches end-of-life — using a neural network trained on NASA's battery degradation dataset.
@@ -35,13 +35,37 @@ Battery capacity degrades non-linearly — it fades slowly at first, then accele
 
 ## Results
 
+### Neural Network Performance
+
 | Battery | Cycles Observed | Initial Capacity (Ah) | MAE (Ah) | RMSE (Ah) | R² | Predicted EOL (cycle) |
 |---------|----------------|------------------------|----------|-----------|-----|----------------------|
-| B0005   |      168       |         1.8565         | **0.0159** | **0.0181** | **0.9909** | 106 |
-| B0006   |      168       |         2.0353         | **0.0199** | **0.0285** | **0.9871** |  60 |
-| B0007   |      168       |         1.8911         | **0.0164** | **0.0216** | **0.9819** | 120 |
+| B0005   | 168            | 1.8565                 | 0.0159   | 0.0181    | 0.9909 | 106 |
+| B0006   | 168            | 2.0353                 | 0.0199   | 0.0285    | 0.9871 | 60  |
+| B0007   | 168            | 1.8911                 | 0.0164   | 0.0216    | 0.9819 | 120 |
+
+### LSTM vs NN Comparison
+
+| Battery | NN RMSE (Ah) | LSTM RMSE (Ah) | Winner |
+|---------|-------------|----------------|--------|
+| B0005   | 0.0156      | 0.0150         | LSTM   |
+| B0006   | 0.0401      | 0.0250         | LSTM   |
+| B0007   | 0.0263      | 0.0160         | LSTM   |
+
+LSTM outperforms the feedforward neural network on all three batteries. The improvement is most significant on B0006 and B0007 (~38–39%), where the degradation curve exhibits more pronounced non-linear behaviour.
 
 <img width="800" height="400" alt="Figure_4" src="https://github.com/user-attachments/assets/708e4638-f84d-482d-96eb-d7b852347a82" />
+
+---
+
+## Experiment Tracking
+
+All training runs are tracked with MLflow — logging parameters (battery, model type, epochs, learning rate) and metrics (MAE, RMSE, R², predicted EOL, predicted RUL) for full reproducibility across all three batteries.
+
+<img width="1919" height="927" alt="image" src="https://github.com/user-attachments/assets/437dcb25-9a4f-4186-8fa8-8e9019b93bea" />
+
+```bash
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+```
 
 ---
 
@@ -78,6 +102,9 @@ pip install -r requirements.txt
 # Run the core pipeline (training, evaluation, plots)
 python main.py
 
+# View experiment tracking dashboard
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+
 # Train and save model for API use
 python train.py
 
@@ -105,6 +132,7 @@ streamlit run app.py
 | Scikit-learn | Evaluation metrics (MAE, RMSE, R²) |
 | Matplotlib | Degradation curve visualisation |
 | FastAPI | REST API for model serving |
+| MLflow | Experiment tracking and reproducibility |
 
 ---
 
