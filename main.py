@@ -5,6 +5,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
+import mlflow
 
 
 # ── Data Loading ──────────────────────────────────────────────────────────────
@@ -166,35 +167,46 @@ if __name__ == "__main__":
         capacity = load_data(path)
         if len(capacity) == 0:
             continue
+        with mlflow.start_run(run_name=f"{label}_NN"):
+            # Log parameters
+            mlflow.log_param("battery", label)
+            mlflow.log_param("model_type", "Feedforward NN")
+            mlflow.log_param("epochs", 300)
+            mlflow.log_param("hidden_units", 32)
+            mlflow.log_param("learning_rate", 0.01)
+            cycles = np.arange(1, len(capacity) + 1)
 
-        cycles = np.arange(1, len(capacity) + 1)
+            # Train model
+            model, max_cycle = train_model(cycles, capacity)
 
-        # Train model
-        model, max_cycle = train_model(cycles, capacity)
-
-        # Evaluate
-        mae, rmse, r2, predicted_capacity = evaluate_model(model, cycles, capacity, max_cycle)
-
-        # Predict RUL
-        eol_cycle, rul = predict_rul(model, capacity, len(cycles), max_cycle)
-
+            # Evaluate
+            mae, rmse, r2, predicted_capacity = evaluate_model(model, cycles, capacity, max_cycle)
+            mlflow.log_metric("mae", mae)
+            mlflow.log_metric("rmse", rmse)
+            mlflow.log_metric("r2", r2)
+            
+            # Predict RUL
+            eol_cycle, rul = predict_rul(model, capacity, len(cycles), max_cycle)
+            if eol_cycle:
+                mlflow.log_metric("predicted_eol_cycle", eol_cycle)
+                mlflow.log_metric("predicted_rul", rul)
+            print(f"\n{label}:")
+            print(f"  Cycles observed : {len(cycles)}")
+            print(f"  Initial capacity: {capacity[0]:.4f} Ah")
+            print(f"  MAE             : {mae:.4f} Ah")
+            print(f"  RMSE            : {rmse:.4f} Ah")
+            print(f"  R²              : {r2:.4f}")
+            if eol_cycle:
+                print(f"  EOL at cycle    : {eol_cycle}")
+                print(f"  RUL             : {rul} cycles remaining")
+            else:
+                print(f"  EOL not reached within projection window")
+        
         # Store for combined plot
         capacities_all[label] = capacity
         cycles_all[label] = cycles
 
         # Print results
-        print(f"\n{label}:")
-        print(f"  Cycles observed : {len(cycles)}")
-        print(f"  Initial capacity: {capacity[0]:.4f} Ah")
-        print(f"  MAE             : {mae:.4f} Ah")
-        print(f"  RMSE            : {rmse:.4f} Ah")
-        print(f"  R²              : {r2:.4f}")
-        if eol_cycle:
-            print(f"  EOL at cycle    : {eol_cycle}")
-            print(f"  RUL             : {rul} cycles remaining")
-        else:
-            print(f"  EOL not reached within projection window")
-
         plot_soh_and_prediction(cycles, capacity, predicted_capacity,
                                 f"{label}: State of Health & RUL Prediction")
 
