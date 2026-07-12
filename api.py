@@ -43,6 +43,8 @@ def root():
 
 @app.post("/predict")
 def predict(data: BatteryData):
+    if len(data.capacity) == 0:
+        return {"error": "capacity list cannot be empty"}, 400
     capacity = np.array(data.capacity)
     cycles = np.arange(1, len(capacity) + 1)
 
