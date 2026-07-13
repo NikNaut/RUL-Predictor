@@ -2,10 +2,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 import mlflow
+
+# --- Reproducibility ---
+np.random.seed(42)
+tf.random.set_seed(42)
 
 
 # ── Data Loading ──────────────────────────────────────────────────────────────
@@ -99,7 +104,7 @@ def predict_rul(model, capacity, current_cycle_count, max_cycle):
     below_threshold = np.where(predictions <= threshold)[0]
 
     if len(below_threshold) > 0:
-        eol_cycle = int(future_cycles[below_threshold[0]][0])
+        eol_cycle = int(below_threshold[0] + 1) 
         rul = max(eol_cycle - current_cycle_count, 0)
         return eol_cycle, rul
 

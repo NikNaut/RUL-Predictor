@@ -2,10 +2,14 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+np.random.seed(42)
+tf.random.set_seed(42)
 
 st.set_page_config(
     page_title="Battery RUL Predictor",
@@ -174,8 +178,8 @@ if uploaded_file:
 
     # ── Train ─────────────────────────────────────────────────────────────────
 
-    st.markdown('<div class="section-header">03 &nbsp; Model Performance</div>',
-                unsafe_allow_html=True)
+    st.markdown('<div class="section-header">03 &nbsp; Curve Fit Quality</div>',
+            unsafe_allow_html=True)
     with st.spinner("Training neural network..."):
         model, max_cycle = train_model(cycles, capacity)
         X = (cycles / max_cycle).reshape(-1, 1).astype(np.float32)
@@ -195,6 +199,7 @@ if uploaded_file:
         r2_class = "good" if r2 >= 0.95 else "warn" if r2 >= 0.85 else "bad"
         st.markdown(
             f'<div class="metric-card"><div class="metric-label">R²</div><div class="metric-value {r2_class}">{r2:.4f}</div></div>', unsafe_allow_html=True)
+    st.caption("Model is trained fresh on this battery's own data — these metrics reflect fit quality, not generalization to unseen batteries.")
 
     # ── RUL ───────────────────────────────────────────────────────────────────
 

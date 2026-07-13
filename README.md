@@ -21,16 +21,19 @@ Predicting *when* this threshold will be crossed (the Remaining Useful Life) all
 ---
 
 ## Approach
-
+ 
 Battery capacity degrades non-linearly — it fades slowly at first, then accelerates near EOL. A feedforward neural network captures this curve more accurately than linear regression.
-
+ 
 **Pipeline:**
 1. Load per-cycle discharge capacity data from NASA's B0005, B0006, B0007 battery datasets
 2. Normalise cycle index to [0, 1] for stable training
 3. Train a 2-layer neural network (32 units, ReLU) to model the capacity degradation curve
 4. Project the curve forward to find the cycle where capacity crosses the 80% EOL threshold
 5. Compute RUL = EOL cycle − current cycle
-
+> **Note on deployed model scope:** The model served via `api.py` (trained by `train.py`)
+> is trained on **B0005 only**. The B0005/B0006/B0007 comparison in the Results section below
+> comes from `main.py`'s standalone analysis pipeline and is not reflected in the live API/Streamlit app.
+ 
 ---
 
 ## Results
@@ -39,19 +42,19 @@ Battery capacity degrades non-linearly — it fades slowly at first, then accele
 
 | Battery | Cycles Observed | Initial Capacity (Ah) | MAE (Ah) | RMSE (Ah) | R² | Predicted EOL (cycle) |
 |---------|----------------|------------------------|----------|-----------|-----|----------------------|
-| B0005   | 168            | 1.8565                 | 0.0159   | 0.0181    | 0.9909 | 106 |
-| B0006   | 168            | 2.0353                 | 0.0199   | 0.0285    | 0.9871 | 60  |
-| B0007   | 168            | 1.8911                 | 0.0164   | 0.0216    | 0.9819 | 120 |
+| B0005   | 168            | 1.8565                 | 0.0187   | 0.0217    | 0.9869 | 105 |
+| B0006   | 168            | 2.0353                 | 0.0226   | 0.0302    | 0.9855 | 62  |
+| B0007   | 168            | 1.8911                 | 0.0179   | 0.0219    | 0.9814 | 123 |
 
 ### LSTM vs NN Comparison
 
 | Battery | NN RMSE (Ah) | LSTM RMSE (Ah) | Winner |
 |---------|-------------|----------------|--------|
-| B0005   | 0.0156      | 0.0150         | LSTM   |
-| B0006   | 0.0401      | 0.0250         | LSTM   |
-| B0007   | 0.0263      | 0.0160         | LSTM   |
+| B0005   | 0.0217      | 0.0216         | LSTM   |
+| B0006   | 0.0302      | 0.0284         | LSTM   |
+| B0007   | 0.0219      | 0.0199         | LSTM   |
 
-LSTM outperforms the feedforward neural network on all three batteries. The improvement is most significant on B0006 and B0007 (~38–39%), where the degradation curve exhibits more pronounced non-linear behaviour.
+LSTM outperforms the feedforward neural network on all three batteries, though the margin on B0005 is minimal — the two models are nearly tied there, with LSTM's advantage more pronounced on B0006 and B0007 where the degradation curve exhibits more pronounced non-linear behaviour.
 
 <img width="800" height="400" alt="Figure_4" src="https://github.com/user-attachments/assets/708e4638-f84d-482d-96eb-d7b852347a82" />
 
@@ -86,6 +89,7 @@ RUL-Predictor/
 ├── train.py                # Trains and saves the model for API use
 ├── api.py                  # FastAPI app — REST endpoint for RUL prediction
 ├── app.py                  # Streamlit web app for interactive RUL prediction
+├── mlflow.db               # MLflow db to track training runs
 ├── requirements.txt        # Dependencies
 └── README.md
 ```

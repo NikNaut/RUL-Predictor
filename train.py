@@ -1,8 +1,13 @@
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
+
+# --- Reproducibility ---
+np.random.seed(42)
+tf.random.set_seed(42)
 
 def train_model(cycles, capacity):
     max_cycle = float(np.max(cycles))
